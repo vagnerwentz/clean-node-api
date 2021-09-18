@@ -143,7 +143,7 @@ describe("SignUp Controller", () => {
       },
     };
 
-    jest.spyOn(emailValidatorStub, "isValid").mockImplementationOnce(() => {
+    jest.spyOn(emailValidatorStub, "isValid").mockImplementation(() => {
       throw new Error();
     });
 
