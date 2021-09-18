@@ -106,7 +106,7 @@ describe("SignUp Controller", () => {
       },
     };
 
-    jest.spyOn(emailValidatorStub, "isValid").mockReturnValueOnce(false);
+    jest.spyOn(emailValidatorStub, "isValid").mockReturnValue(false);
 
     const httpResponse = systemUnderTest.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(400);
