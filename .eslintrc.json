@@ -24,19 +24,7 @@
     "camelcase": "off",
     "import/no-unresolved": "error",
     "prettier/prettier": "error",
-    // "@typescript-eslint/naming-convention": [
-    //   "error",
-    //   {
-    //     "selector": "interface",
-    //     "format": [
-    //       "PascalCase"
-    //     ],
-    //     "custom": {
-    //       "regex": "^I[A-Z]",
-    //       "match": true
-    //     }
-    //   }
-    // ],
+    "no-restricted-syntax": "off",
     "class-methods-use-this": "off",
     "import/prefer-default-export": "off",
     "no-shadow": "off",
