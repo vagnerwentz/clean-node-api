@@ -1,3 +1,5 @@
+import { AccountModel } from "../../domain/models/account";
+import { AddAccount, AddAccountModel } from "../../domain/useCases/add-account";
 import { InvalidParamError, MissingParamError, ServerError } from "../errors";
 import { EmailValidator } from "../protocols";
 import { SignUpController } from "./signup";
@@ -5,6 +7,7 @@ import { SignUpController } from "./signup";
 interface SystemUnderTestTypes {
   systemUnderTest: SignUpController;
   emailValidatorStub: EmailValidator;
+  addAccountStub: AddAccount;
 }
 
 const makeEmailValidator = (): EmailValidator => {
@@ -17,11 +20,32 @@ const makeEmailValidator = (): EmailValidator => {
   return new EmailValidatorStub();
 };
 
+const makeAddAccount = (): AddAccount => {
+  class AddAccountStub implements AddAccount {
+    add(account: AddAccountModel): AccountModel {
+      const fakeAccount = {
+        id: "valid_id",
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "valid_password",
+      };
+      return fakeAccount;
+    }
+  }
+
+  return new AddAccountStub();
+};
+
 const makeSystemUnderTest = (): SystemUnderTestTypes => {
   const emailValidatorStub = makeEmailValidator();
-  const systemUnderTest = new SignUpController(emailValidatorStub);
+  const addAccountStub = makeAddAccount();
+  const systemUnderTest = new SignUpController(
+    emailValidatorStub,
+    addAccountStub
+  );
 
   return {
+    addAccountStub,
     systemUnderTest,
     emailValidatorStub,
   };
@@ -169,5 +193,27 @@ describe("SignUp Controller", () => {
     const httpResponse = systemUnderTest.handle(httpRequest);
     expect(httpResponse.statusCode).toBe(500);
     expect(httpResponse.body).toEqual(new ServerError());
+  });
+
+  it("Should call AddAccount with correct values.", () => {
+    const { systemUnderTest, addAccountStub } = makeSystemUnderTest();
+
+    const httpRequest = {
+      body: {
+        name: "any_name",
+        email: "any_email@mail.com",
+        password: "any_password",
+        passwordConfirmation: "any_password",
+      },
+    };
+
+    const addSpy = jest.spyOn(addAccountStub, "add");
+
+    systemUnderTest.handle(httpRequest);
+    expect(addSpy).toHaveBeenCalledWith({
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    });
   });
 });
