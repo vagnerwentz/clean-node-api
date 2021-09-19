@@ -116,4 +116,21 @@ describe("DbAddAccount UseCase", () => {
     const promise = systemUnderTest.add(accountData);
     await expect(promise).rejects.toThrow();
   });
+
+  it("Should return an account on success.", async () => {
+    const { systemUnderTest } = makeSystemUnderTest();
+    const accountData = {
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+
+    const account = await systemUnderTest.add(accountData);
+    expect(account).toEqual({
+      id: "valid_id",
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      password: "hashed_password",
+    });
+  });
 });
