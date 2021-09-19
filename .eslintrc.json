@@ -22,6 +22,7 @@
   ],
   "rules": {
     "camelcase": "off",
+    "prefer-object-spread": "off",
     "max-classes-per-file": "off",
     "import/no-unresolved": "error",
     "prettier/prettier": "error",

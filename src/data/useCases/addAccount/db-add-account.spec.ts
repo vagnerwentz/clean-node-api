@@ -1,9 +1,15 @@
 import { DbAddAccount } from "./db-add-account";
-import { Encrypter } from "./db-add-account-protocols";
+import {
+  Encrypter,
+  AddAccountModel,
+  AccountModel,
+  AddAccountRepository,
+} from "./db-add-account-protocols";
 
 interface SystemUnderTestTypes {
   systemUnderTest: DbAddAccount;
   encrypterStub: Encrypter;
+  addAccountRepositoryStub: AddAccountRepository;
 }
 
 const makeEncrypter = (): Encrypter => {
@@ -15,13 +21,33 @@ const makeEncrypter = (): Encrypter => {
   return new EncrypterStub();
 };
 
+const makeAddAccountRepository = (): AddAccountRepository => {
+  class AddAccountRepositoryStub implements AddAccountRepository {
+    async add(account: AddAccountModel): Promise<AccountModel> {
+      const fakeAccount = {
+        id: "valid_id",
+        name: "valid_name",
+        email: "valid_email@mail.com",
+        password: "hashed_password",
+      };
+      return new Promise((resolve) => resolve(fakeAccount));
+    }
+  }
+  return new AddAccountRepositoryStub();
+};
+
 const makeSystemUnderTest = (): SystemUnderTestTypes => {
   const encrypterStub = makeEncrypter();
-  const systemUnderTest = new DbAddAccount(encrypterStub);
+  const addAccountRepositoryStub = makeAddAccountRepository();
+  const systemUnderTest = new DbAddAccount(
+    encrypterStub,
+    addAccountRepositoryStub
+  );
 
   return {
     systemUnderTest,
     encrypterStub,
+    addAccountRepositoryStub,
   };
 };
 describe("DbAddAccount UseCase", () => {
@@ -54,5 +80,22 @@ describe("DbAddAccount UseCase", () => {
 
     const promise = systemUnderTest.add(accountData);
     await expect(promise).rejects.toThrow();
+  });
+
+  it("Should call AddAccountRepository with correct values.", async () => {
+    const { systemUnderTest, addAccountRepositoryStub } = makeSystemUnderTest();
+    const accountData = {
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      password: "valid_password",
+    };
+    const addSpy = jest.spyOn(addAccountRepositoryStub, "add");
+
+    await systemUnderTest.add(accountData);
+    expect(addSpy).toHaveBeenCalledWith({
+      name: "valid_name",
+      email: "valid_email@mail.com",
+      password: "hashed_password",
+    });
   });
 });
