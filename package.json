@@ -24,8 +24,10 @@
     ]
   },
   "devDependencies": {
+    "@shelf/jest-mongodb": "^2.1.0",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.0.1",
+    "@types/mongodb": "^4.0.7",
     "@types/node": "^16.9.2",
     "@types/validator": "^13.6.3",
     "eslint": "^7.32.0",
@@ -47,6 +49,7 @@
     "bcrypt": "^5.0.1",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
+    "mongodb": "^4.1.2",
     "validator": "^13.6.0"
   }
 }
