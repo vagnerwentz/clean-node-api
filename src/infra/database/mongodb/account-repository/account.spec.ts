@@ -10,9 +10,15 @@ describe("Account Mongo Repository", () => {
     await MongoHelper.disconnect();
   });
 
+  beforeEach(async () => {
+    const accountCollection = MongoHelper.getCollection("accounts");
+    await accountCollection.deleteMany({});
+  });
+
   const makeSystemUnderTest = (): AccountMongoRepository => {
     return new AccountMongoRepository();
   };
+
   it("Should return an account on success.", async () => {
     const systemUnderTest = makeSystemUnderTest();
     const account = await systemUnderTest.add({
